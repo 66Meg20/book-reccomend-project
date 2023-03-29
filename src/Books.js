@@ -1,7 +1,14 @@
 import React from "react";
+import axios from "axios";
 import "./Books.css";
 
 export default function Books() {
+  function handleResponse(response) {
+    console.log(response.data);
+  }
+
+  let apiUrl = `https://openlibrary.org/search.json?q=the+lord+of+the+rings`;
+  axios.get(apiUrl).then(handleResponse);
   return (
     <div className="Books">
       {" "}
