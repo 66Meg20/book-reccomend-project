@@ -4,10 +4,14 @@ import "./Books.css";
 
 export default function Books() {
   const [ready, setReady] = useState(false);
-  const [title, setTitle] = useState(null);
+  const [bookData, setBookData] = useState({});
   function handleResponse(response) {
     console.log(response.data);
-    setTitle(response.data.docs[0].title);
+    setBookData({
+      name: response.data.docs[0].name,
+      key: response.data.docs[0].key,
+    });
+
     setReady(true);
   }
 
@@ -15,7 +19,7 @@ export default function Books() {
     return (
       <div className="Books">
         {" "}
-        <h1>{title}</h1>
+        <h1>{bookData.name}</h1>
         <form>
           <input type="search" placeholder="book name" />
           <button className="btn btn-primary"> Search </button>
@@ -28,8 +32,10 @@ export default function Books() {
       </div>
     );
   } else {
-    let apiUrl = `https://openlibrary.org/search.json?q=from+blood+and+ash`;
+    let apiUrl = `https://openlibrary.org/search/authors.json?q=sarah%20j%20maas`;
+    let apiAuthorUrl = `https://openlibrary.org/authors/OL7115219A/works.json`;
     axios.get(apiUrl).then(handleResponse);
+    axios.get(apiAuthorUrl).then(handleResponse);
     return "Loading...";
   }
 }
