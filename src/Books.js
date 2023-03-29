@@ -7,14 +7,19 @@ export default function Books() {
   const [bookData, setBookData] = useState({});
   function handleResponse(response) {
     console.log(response.data);
+
     setBookData({
       name: response.data.docs[0].name,
-      key: response.data.docs[0].key,
+      authorKey: response.data.docs[0].key,
     });
+    authorWorks();
 
     setReady(true);
   }
-
+  function authorWorks() {
+    let apiAuthorUrl = `https://openlibrary.org/authors/${bookData.authorKey}/works.json`;
+    axios.get(apiAuthorUrl).then(handleResponse);
+  }
   if (ready) {
     return (
       <div className="Books">
@@ -32,10 +37,10 @@ export default function Books() {
       </div>
     );
   } else {
-    let apiUrl = `https://openlibrary.org/search/authors.json?q=sarah%20j%20maas`;
-    let apiAuthorUrl = `https://openlibrary.org/authors/OL7115219A/works.json`;
+    let apiUrl = `https://openlibrary.org/search/authors.json?q=sarah j maas`;
+
     axios.get(apiUrl).then(handleResponse);
-    axios.get(apiAuthorUrl).then(handleResponse);
+
     return "Loading...";
   }
 }
