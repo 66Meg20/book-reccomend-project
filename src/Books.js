@@ -1,30 +1,25 @@
 import React, { useState } from "react";
 import axios from "axios";
+
 import "./Books.css";
 
 export default function Books() {
-  const [ready, setReady] = useState(false);
-  const [bookData, setBookData] = useState({});
+  const [bookData, setBookData] = useState({ ready: false });
   function handleResponse(response) {
     console.log(response.data);
 
     setBookData({
-      name: response.data.docs[0].name,
-      authorKey: response.data.docs[0].key,
+      ready: true,
+      title: response.data.docs[0].title,
+      author_name: response.data.docs[0].author_name,
     });
-    authorWorks();
+  }
 
-    setReady(true);
-  }
-  function authorWorks() {
-    let apiAuthorUrl = `https://openlibrary.org/authors/${bookData.authorKey}/works.json`;
-    axios.get(apiAuthorUrl).then(handleResponse);
-  }
-  if (ready) {
+  if (bookData.ready) {
     return (
       <div className="Books">
         {" "}
-        <h1>{bookData.name}</h1>
+        <h1>{bookData.title}</h1>
         <form>
           <input type="search" placeholder="book name" />
           <button className="btn btn-primary"> Search </button>
@@ -34,12 +29,14 @@ export default function Books() {
           <li> From blood and ash</li>
           <li> Cresent city</li>
         </ul>
+        <h2>{bookData.author_name}</h2>
       </div>
     );
   } else {
-    let apiUrl = `https://openlibrary.org/search/authors.json?q=sarah j maas`;
-
+    let apiUrl = `https://openlibrary.org/search.json?title=throne+of+glass`;
+    let authorUrl = `https://openlibrary.org/search/authors.json?q=${bookData.author_name}`;
     axios.get(apiUrl).then(handleResponse);
+    axios.get(authorUrl).then(handleResponse);
 
     return "Loading...";
   }
